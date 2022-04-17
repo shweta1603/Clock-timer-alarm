@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+<body>
+    <h1>CLOCK </h1>
+    <ul>
+        <li><a href="#current-time">  Simple Clock </a> </li>
+       
+    
+        <li><a href="#section2">  Timer </a></li>
+       
+
+        <li><a href="#section3"> Alarm Clock </a></li>
+    </ul>
+    
+    <div id="content">
+        <section id="current-time"> <h2>Simple Clock</h2></section>
+        <section id="section2"> <h2>Timer</h2>
+            <div id="timer">
+                00 : 00 : 00 : 00
+            </div>
+            <div id="button-div">
+                <button class="button" onclick="startTimer()">
+                    Start
+                </button>
+                <button class="button" onclick="stopTimer()">
+                    Stop
+                </button>
+            </div>    
+        </section>
+        <section id="section3"> 
+            
+            <div id="alarm">
+                <h2>Alarm Clock</h2>
+                <input id="input-hour" class="button" type="number" min="0" max="23"/>
+                <input id="input-min" class="button" type="number" min="0" max="59"/>
+                <input id="input-sec" class="button" type="number" min="0" max="59"/>
+        
+                <button class="button" onclick="setAlarm()"> Set Alarm </button>
+            </div>
+        </section>
+    </div>
+</body>
+<script>
+    setInterval(setCurrentTime, 1000); //1000 ms= 1 sec
+    function setCurrentTime(){
+    let currentDate=new Date();
+    let hour=currentDate.getHours();
+    let minute=currentDate.getMinutes();
+    let seconds=currentDate.getSeconds();
+
+    document.getElementById("current-time").innerText= `${hour} : ${minute} : ${seconds}`;
+}
+
+let startTime=null;
+    let currentTimeElapsed=null;
+    let timerId=null;
+    function startTimer(){
+        startTime=Date.now();
+        console.log(startTime);
+        //to stop timer, timerId is used to store and use setInterval
+        timerId= setInterval( function(){
+            currentTimeElapsed= Date.now() - startTime;
+            setTimerUpdate();
+        },1)  //updated every 1msec
+    }
+    function setTimerUpdate(){
+        let currentMilliSecElapsed= currentTimeElapsed % 1000;  //so that not greater than 1000
+        let currentSecElapsed= currentTimeElapsed/1000;  
+        let currentMinElapsed=currentSecElapsed/60 ;
+        let currentHourElapsed= currentMinElapsed/60;
+
+        document.getElementById("timer").innerText= `${Math.floor(currentHourElapsed%60)} : ${Math.floor(currentMinElapsed%60)} : ${Math.floor(currentSecElapsed%60)} : ${Math.floor(currentMilliSecElapsed)}`;  
+    }
+    function stopTimer(){
+       if(timerId) clearInterval(timerId);
+    }
+    function setAlarm(){
+        let hour=parseInt(document.getElementById("input-hour").value);
+        let min=parseInt(document.getElementById("input-min").value);
+        let sec=parseInt(document.getElementById("input-sec").value);
+
+        let currentDate=new Date();
+        let currentHour=currentDate.getHours();
+        let currentMinute=currentDate.getMinutes();
+        let currentSeconds=currentDate.getSeconds();
+   
+        let secDiff=sec-currentSeconds;
+        if(secDiff<0){
+            secDiff=60+secDiff;
+            min--;
+        }
+        let minDiff= min-currentMinute;
+        if(minDiff<0){
+            minDiff=60+minDiff;
+            hour--;
+        }
+        let hourDiff= hour-currentHour;
+
+        console.log(">>>>>", secDiff,">>>", minDiff,">>",hourDiff);
+        let totalmillisecDiff= ((((hourDiff*60)+ minDiff)*60)+secDiff)*1000;
+        setTimeout(function() { alert("Alarm rings!") }, totalmillisecDiff);
+        console.log(hour , min, sec)
+        
+    }
+</script>
+</html>
